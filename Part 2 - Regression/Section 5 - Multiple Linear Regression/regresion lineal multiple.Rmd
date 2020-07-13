@@ -1,0 +1,85 @@
+---
+title: "Regresion Lineal Multiple"
+author: "Diego Pavez"
+date: "18/6/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# Importar el dataset
+dataset = read.csv('50_Startups.csv')
+#dataset = dataset[, 2:3]
+
+# Codificar las variables categoricas
+dataset$State = factor(dataset$State,
+                         levels = c("New York", "California", "Florida"),
+                         labels = c(1, 2, 3))
+
+```
+
+```{r}
+#Dividir los datos en conjunto de entrenamiento y testing
+
+library(caTools)
+set.seed(123)
+split = sample.split(dataset$Profit, SplitRatio = 0.8)
+training_set = subset(dataset, split == TRUE)
+testing_set = subset(dataset, split == FALSE)
+```
+
+```{r}
+#Ajustar el modelo de regresion lineal multiple con el conjunto de entrenamiento
+# . signinfica todas las otras variables
+regression = lm(formula = Profit ~ .,
+                data = training_set)
+summary(regression)
+```
+```{r}
+# Predecir los resultados con el conjunto de testing
+y_pred = predict(regression, newdata = testing_set)
+
+head(y_pred, 10)
+```
+```{r}
+#Construir un modelo mas optimo con la Eliminacion hacia atras
+SL = 0.05
+regression = lm(formula = Profit ~ R.D.Spend + Administration + Marketing.Spend + State,
+                data = dataset)
+summary(regression)
+
+#Eliminamos la que tiene el p valor mas grande, en este caso state
+regression = lm(formula = Profit ~ R.D.Spend + Administration + Marketing.Spend,
+                data = dataset)
+summary(regression)
+
+#Eliminamos la que tiene el p valor mas grande, en este caso administration
+regression = lm(formula = Profit ~ R.D.Spend + Marketing.Spend,
+                data = dataset)
+summary(regression)
+```
+```{r}
+#Eliminacion hacia atras automatica, por si son muchas variables
+backwardElimination <- function(x, sl) {
+  numVars = length(x)
+  for (i in c(1:numVars)){
+    regressor = lm(formula = Profit ~ ., data = x)
+    maxVar = max(coef(summary(regressor))[c(2:numVars), "Pr(>|t|)"])
+    if (maxVar > sl){
+      j = which(coef(summary(regressor))[c(2:numVars), "Pr(>|t|)"] == maxVar)
+      x = x[, -j]
+    }
+    numVars = numVars - 1
+  }
+  return(summary(regressor))
+}
+ 
+SL = 0.05
+dataset = dataset[, c(1,2,3,4,5)]
+backwardElimination(training_set, SL)
+```
+
+
