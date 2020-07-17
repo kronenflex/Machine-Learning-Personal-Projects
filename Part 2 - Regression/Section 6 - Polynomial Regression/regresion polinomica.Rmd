@@ -2,7 +2,9 @@
 title: "Regresion Polinomica"
 author: "Diego Pavez Olave"
 date: "12/7/2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -34,7 +36,7 @@ ggplot() +
              color = "red") +
   geom_line(aes(x = dataset$Level, y = predict(lin_reg, newdata = dataset)),
             color = "blue") +
-  ggtitle("PredicciÃ³n lineal del suedlo en funciÃ³n del nivel del empleado") +
+  ggtitle("Prediccion lineal del sueldo en funcion del nivel del empleado") +
   xlab("Nivel del empleado") +
   ylab("Sueldo (en $)")
 ```
