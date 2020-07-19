@@ -1,0 +1,48 @@
+---
+title: "Decision Tree Regression"
+author: "Diego Pavez Olave"
+date: "19/7/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(rpart)
+library(ggplot2)
+```
+
+```{r}
+# Importar el dataset
+dataset = read.csv('Position_Salaries.csv')
+dataset = dataset[, 2:3]
+```
+```{r}
+# Ajustar Modelo de DTR con el Conjunto de Datos
+regression = rpart(formula = Salary ~ ., 
+             data = dataset,
+             control = rpart.control(minsplit = 1)) #control aumentamos el numero de hojas para ajustar el modelo
+```
+
+```{r}
+# Prediccion de nuevos resultados con DTR
+y_pred = predict(regression, newdata = data.frame(Level = 6.5))
+head(y_pred)
+```
+
+
+```{r}
+# Visualizacion del modelo DTR
+x_grid = seq(min(dataset$Level), max(dataset$Level), 0.1)
+
+ggplot() +
+  geom_point(aes(x = dataset$Level , y = dataset$Salary),
+             color = "red") +
+  geom_line(aes(x = x_grid, y = predict(regression, 
+                                        newdata = data.frame(Level = x_grid))),
+            color = "blue") +
+  ggtitle("Prediccion DTR del sueldo en funcion del nivel del empleado") +
+  xlab("Nivel del empleado") +
+  ylab("Sueldo (en $)")
+```

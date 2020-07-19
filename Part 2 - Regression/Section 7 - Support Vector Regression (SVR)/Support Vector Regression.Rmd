@@ -1,0 +1,51 @@
+---
+title: "Support Vector Regression"
+author: "Diego Pavez Olave"
+date: "19/7/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(e1071)
+library(ggplot2)
+```
+
+```{r}
+# Importar el dataset
+dataset = read.csv('Position_Salaries.csv')
+dataset = dataset[, 2:3]
+```
+```{r}
+# Ajustar Modelo de SVR con el Conjunto de Datos
+regression = svm(formula = Salary ~ ., 
+             data = dataset,
+             type = "eps-regression",
+             kernel = "radial")
+```
+
+```{r}
+# Prediccion de nuevos resultados con SVR
+y_pred = predict(regression, newdata = data.frame(Level = 6.5))
+head(y_pred)
+```
+
+
+```{r}
+# Visualizacion del modelo SVR
+x_grid = seq(min(dataset$Level), max(dataset$Level), 0.1)
+ggplot() +
+  geom_point(aes(x = dataset$Level , y = dataset$Salary),
+             color = "red") +
+  geom_line(aes(x = x_grid, y = predict(regression, 
+                                        newdata = data.frame(Level = x_grid,
+                                                             Level2 = x_grid^2,
+                                                             Level3 = x_grid^3,
+                                                             Level4 = x_grid^4))),
+            color = "blue") +
+  ggtitle("Prediccion SVR del sueldo en funcion del nivel del empleado") +
+  xlab("Nivel del empleado") +
+  ylab("Sueldo (en $)")
+```

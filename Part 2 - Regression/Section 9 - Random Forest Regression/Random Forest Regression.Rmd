@@ -1,0 +1,49 @@
+---
+title: "Random Forest Regression"
+author: "Diego Pavez Olave"
+date: "19/7/2020"
+output: pdf_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(randomForest)
+library(ggplot2)
+```
+
+```{r}
+# Importar el dataset
+dataset = read.csv('Position_Salaries.csv')
+dataset = dataset[, 2:3]
+```
+```{r}
+# Ajustar Modelo de random forest con el Conjunto de Datos
+set.seed(1234)
+regression = randomForest(x = dataset[1],
+                          y = dataset$Salary,
+                          ntree = 500)
+```
+
+```{r}
+# Prediccion de nuevos resultados con random forest
+y_pred = predict(regression, newdata = data.frame(Level = 6.5))
+head(y_pred)
+```
+
+
+```{r}
+
+# Visualizacion del modelo random forest
+x_grid = seq(min(dataset$Level), max(dataset$Level), 0.001)
+
+ggplot() +
+  geom_point(aes(x = dataset$Level , y = dataset$Salary),
+             color = "red") +
+  geom_line(aes(x = x_grid, y = predict(regression, 
+                                        newdata = data.frame(Level = x_grid))),
+            color = "blue") +
+  ggtitle("Prediccion Random Forest del sueldo en funcion del nivel del empleado") +
+  xlab("Nivel del empleado") +
+  ylab("Sueldo (en $)")
+```
