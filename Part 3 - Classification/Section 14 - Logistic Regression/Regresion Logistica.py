@@ -1,14 +1,11 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Mar 12 13:50:03 2019
+Created on Tue Jul 21 22:44:35 2020
 
-@author: juangabriel
+@author: DiegoIgnacioPavezOla
 """
 
-# Regresión Logística
-
-# Cómo importar las librerías
+#importar las librerías
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -80,7 +77,43 @@ plt.ylabel('Sueldo Estimado')
 plt.legend()
 plt.show()
 
+# Traspasar a las variables sin escalado
 
-
+from matplotlib.colors import ListedColormap
+X_set, y_set = X_train, y_train
+#X_set, y_set = X_test, y_test
+X1_n, X2_n = np.meshgrid(np.arange(start = X_set[:, 0].min(),
+                               stop = X_set[:, 0].max() + 1,
+                               step = (abs(X_set[:, 0].min()) + abs(X_set[:, 0].max() + 1)) / 1000),
+                               #step = 1),
+                     np.arange(start = X_set[:, 1].min(),
+                               stop = X_set[:, 1].max() + 1,
+                               step = (abs(X_set[:, 1].min()) + abs(X_set[:, 1].max() + 1)) / 1000))
+                               #step = 10000))
+X_set, y_set = sc_X.inverse_transform(X_train), y_train
+#X_set, y_set = sc_X.inverse_transform(X_test), y_test
+X1, X2 = np.meshgrid(np.arange(start = X_set[:, 0].min(),
+                               stop = X_set[:, 0].max() + 10,
+                               step = (abs(X_set[:, 0].max() + 10 - abs(X_set[:, 0].min())) / 1000)),
+                     np.arange(start = X_set[:, 1].min(),
+                               stop = X_set[:, 1].max() + 10000,
+                               #step = 0.01))
+                               step = (abs(X_set[:, 1].max() + 10000 - abs(X_set[:, 1].min())) / 1000)))
+plt.contourf(X1,
+             X2,
+             classifier.predict(np.array([X1_n.ravel(), X2_n.ravel()]).T).reshape(X1_n.shape),
+             alpha = 0.75,
+             cmap = ListedColormap(('red', 'green')))
+plt.xlim(X1.min(), X1.max())
+plt.ylim(X2.min(), X2.max())
+for i, j in enumerate(np.unique(y_set)):
+    plt.scatter(X_set[y_set == j, 0],
+                X_set[y_set == j, 1],
+                c = ListedColormap(('red', 'green'))(i), label = j)
+plt.title('Clasificador (Conjunto de Entrenamiento)')
+plt.xlabel('Edad')
+plt.ylabel('Sueldo Estimado')
+plt.legend()
+plt.show()
 
 
