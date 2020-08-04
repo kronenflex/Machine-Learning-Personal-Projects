@@ -41,6 +41,11 @@ y_pred  = classifier.predict(X_test)
 from sklearn.metrics import confusion_matrix
 cm = confusion_matrix(y_test, y_pred)
 
+#Estadistica de prediccion
+from sklearn import metrics
+print("Train set Accuracy: ", metrics.accuracy_score(y_train, classifier.predict(X_train)))
+print("Test set Accuracy: ", metrics.accuracy_score(y_test, y_pred))
+
 # Representación gráfica de los resultados del algoritmo en el Conjunto de Entrenamiento
 from matplotlib.colors import ListedColormap
 X_set, y_set = X_train, y_train
